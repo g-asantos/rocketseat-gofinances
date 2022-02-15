@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Keyboard, Modal,Alert } from 'react-native';
+import { Modal,Alert } from 'react-native';
 import * as Yup from 'yup';
 import { yupResolver} from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,7 @@ import {
     Fields,
     TransactionsTypes,
 } from './styles';
-import { GestureHandlerRootView, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface FormData{
    [name: string]: any;
@@ -30,6 +30,7 @@ const schema = Yup.object().shape({
     .number()
     .typeError('Informe um valor númerico')
     .positive('O valor não pode ser negativo')
+    .required('Valor é obrigatório')
 });
 
 export function Register(){
@@ -79,10 +80,6 @@ export function Register(){
     }
 
     return (
-        <TouchableWithoutFeedback 
-        containerStyle={{flex: 1}}
-        style={{flex: 1}}
-        onPress={Keyboard.dismiss}>
         <Container>
             <Header>
                 <Title>Cadastro</Title>
@@ -148,6 +145,5 @@ export function Register(){
                 />
             </Modal>
         </Container>
-        </TouchableWithoutFeedback>
     )
 };
