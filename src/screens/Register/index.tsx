@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Keyboard, Modal, TouchableWithoutFeedback, Alert } from 'react-native';
+import { Keyboard, Modal,Alert } from 'react-native';
 import * as Yup from 'yup';
 import { yupResolver} from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,7 @@ import {
     Fields,
     TransactionsTypes,
 } from './styles';
+import { GestureHandlerRootView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 interface FormData{
    [name: string]: any;
@@ -78,55 +79,66 @@ export function Register(){
     }
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback 
+        containerStyle={{flex: 1}}
+        style={{flex: 1}}
+        onPress={Keyboard.dismiss}>
         <Container>
             <Header>
                 <Title>Cadastro</Title>
             </Header>
 
             <Form>
-                <Fields>
-                    <InputForm 
-                    name="name"
-                    control={control}
-                    placeholder="Nome"
-                    autoCapitalize="sentences"
-                    autoCorrect={false}
-                    error={errors.name && errors.name.message}
-                    />
-                    <InputForm 
-                    name="amount"
-                    control={control}
-                    placeholder="Preço"
-                    keyboardType="numeric"
-                    error={errors.amount && errors.amount.message}
-                    />
-
-                    <TransactionsTypes>
-                        <TransactionTypeButton 
-                        onPress={() => handleTransactionTypeSelect('up')}
-                        isActive={transactionType === 'up'}
-                        type="up" 
-                        title="Income"
+                    <Fields>
+                        <InputForm
+                            name="name"
+                            control={control}
+                            placeholder="Nome"
+                            autoCapitalize="sentences"
+                            autoCorrect={false}
+                            error={errors.name && errors.name.message}
                         />
-                        <TransactionTypeButton 
-                        onPress={() => handleTransactionTypeSelect('down')}
-                        isActive={transactionType === 'down'}
-                        type="down" 
-                        title="Outcome"/>
-                    </TransactionsTypes>
+                        <InputForm
+                            name="amount"
+                            control={control}
+                            placeholder="Preço"
+                            keyboardType="numeric"
+                            error={errors.amount && errors.amount.message}
+                        />
 
-                    <CategorySelectButton 
-                    title={category.name}
-                    onPress={handleOpenSelectCategoryModal}
-                    />
-                </Fields>
-                
-                <Button 
-                    title="Enviar"
-                    onPress={handleSubmit(handleRegister)}
-                />
-            </Form>
+                        <TransactionsTypes>
+                            <GestureHandlerRootView>
+                                <TransactionTypeButton
+                                    onPress={() => handleTransactionTypeSelect('up')}
+                                    isActive={transactionType === 'up'}
+                                    type="up"
+                                    title="Income"
+                                />
+                            </GestureHandlerRootView>
+                            <GestureHandlerRootView>
+                                <TransactionTypeButton
+                                    onPress={() => handleTransactionTypeSelect('down')}
+                                    isActive={transactionType === 'down'}
+                                    type="down"
+                                    title="Outcome" />
+                            </GestureHandlerRootView>
+                        </TransactionsTypes>
+
+                        <GestureHandlerRootView>
+                            <CategorySelectButton
+                                title={category.name}
+                                onPress={handleOpenSelectCategoryModal}
+                            />
+                        </GestureHandlerRootView>
+                    </Fields>
+
+                    <GestureHandlerRootView>
+                        <Button
+                            title="Enviar"
+                            onPress={handleSubmit(handleRegister)}
+                        />
+                    </GestureHandlerRootView>
+                </Form>
 
             <Modal visible={categoryModalOpen}>
                 <CategorySelect 
