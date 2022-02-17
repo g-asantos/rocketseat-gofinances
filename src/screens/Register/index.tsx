@@ -2,7 +2,12 @@ import React, {useState} from "react";
 import { Modal,Alert } from 'react-native';
 import * as Yup from 'yup';
 import { yupResolver} from '@hookform/resolvers/yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+
 import { useForm } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+
 import { Button } from "../../components/Forms/Button/Button";
 import { CategorySelectButton } from "../../components/Forms/CategorySelectButton";
 import { InputForm } from "../../components/Forms/InputForm";
@@ -20,6 +25,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface FormData{
    [name: string]: any;
+}
+
+interface NavigationProps{
+    navigate: (screen: string) => void;
 }
 
 const schema = Yup.object().shape({
@@ -45,12 +54,15 @@ export function Register(){
     const {
         control,
         handleSubmit,
-        formState: {errors}
+        formState: {errors},
+        reset,
     } = useForm({
             resolver: yupResolver(schema),
         });
+    
+    const navigation = useNavigation<NavigationProps>();
 
-    function handleTransactionTypeSelect(type: "up" | "down"){
+    function handleTransactionTypeSelect(type: "positive" | "negative"){
         setTransactionType(type);
     }
 
@@ -62,7 +74,7 @@ export function Register(){
         setCategoryModalOpen(false);
     }
 
-    function handleRegister(form: FormData){
+    async function handleRegister(form: FormData){
         if(!transactionType){
             return Alert.alert('Selecione o tipo da transação');
         };
@@ -71,11 +83,39 @@ export function Register(){
             return Alert.alert('Selecione a categoria');
         };
 
-        const data ={
+        const newTransaction ={
+            id: String(uuid.v4()),
             name: form.name,
             amount: form.amount,
-            transactionType,
+            type: transactionType,
             category: category.key,
+            date: new Date(),
+        }
+
+        try {
+            const dataKey = '@gofinances:transactions';
+            const dataAlreadySaved = await AsyncStorage.getItem(dataKey);
+            const currentData = dataAlreadySaved ? JSON.parse(dataAlreadySaved): [];
+
+            const dataFormatted = [
+                ...currentData,
+                newTransaction,
+            ];
+
+            await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
+
+            reset();
+            setTransactionType('');
+            setCategory({
+                key: 'category',
+                name: 'Categoria',
+            });
+
+            navigation.navigate('Listagem');
+
+        } catch (err) {
+            console.log(err, 'ERROR');
+            Alert.alert('Não foi possível salvar');
         }
     }
 
@@ -106,16 +146,16 @@ export function Register(){
                         <TransactionsTypes>
                             <GestureHandlerRootView>
                                 <TransactionTypeButton
-                                    onPress={() => handleTransactionTypeSelect('up')}
-                                    isActive={transactionType === 'up'}
+                                    onPress={() => handleTransactionTypeSelect('positive')}
+                                    isActive={transactionType === 'positive'}
                                     type="up"
                                     title="Income"
                                 />
                             </GestureHandlerRootView>
                             <GestureHandlerRootView>
                                 <TransactionTypeButton
-                                    onPress={() => handleTransactionTypeSelect('down')}
-                                    isActive={transactionType === 'down'}
+                                    onPress={() => handleTransactionTypeSelect('negative')}
+                                    isActive={transactionType === 'negative'}
                                     type="down"
                                     title="Outcome" />
                             </GestureHandlerRootView>
