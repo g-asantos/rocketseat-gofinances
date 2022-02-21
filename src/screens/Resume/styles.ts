@@ -1,6 +1,5 @@
 import styled from 'styled-components/native'
 import { RFValue } from 'react-native-responsive-fontsize'
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { BorderlessButton } from 'react-native-gesture-handler'
 import { Feather } from '@expo/vector-icons'
 
@@ -22,19 +21,12 @@ export const Header = styled.View`
   padding-bottom: 19px;
 `
 
-export const Content = styled.ScrollView.attrs({
-    contentContainerStyle: { flex: 1,
-      paddingHorizontal: 24,
-      paddingBottom: useBottomTabBarHeight(), },
-    showsVerticalScrollIndicator: false,
-})``;
+export const Content = styled.ScrollView``;
 
 export const ChartContainer = styled.View`
   width: 100%;
   align-items: center
 `;
-
-
 
 export const MonthSelect = styled.View`
   width: 100%;
@@ -55,4 +47,10 @@ font-size: ${RFValue(24)}px;
 export const Month = styled.Text`
     font-family: ${({ theme }) => theme.fonts.regular};
     font-size: ${RFValue(20)}px;
+`;
+
+export const LoadContainer = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
 `;

@@ -52,9 +52,9 @@ export function Dashboard() {
                 collection
                     .filter((transaction) => transaction.type === type)
                     .map((transaction) => new Date(transaction.date).getTime())
-        ));
-
-        return `${lastTransactions.getDate()} de ${lastTransactions.toLocaleString('pt-BR', { month: 'long' })}}`;
+            ));
+        
+        return `${lastTransactions.getDate()} de ${lastTransactions.toLocaleDateString('pt-BR', { month: 'long' })}`
     }
 
     async function loadTransactions() {
@@ -96,7 +96,7 @@ export function Dashboard() {
         const total = entriesTotal - expensesTotal;
 
         setTransactions(transactionsFormatted);
-        
+
         const lastTransactionEntries = getLastTransactionDate(transactions, 'positive');
 
         const lastTransactionExpenses = getLastTransactionDate(transactions, 'negative');
@@ -129,10 +129,6 @@ export function Dashboard() {
 
         setIsLoading(false);
     }
-
-    useEffect(() => {
-        loadTransactions();
-    }, []);
 
     useFocusEffect(useCallback(() => {
         loadTransactions();
